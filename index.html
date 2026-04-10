@@ -3,12 +3,32 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <script src="script.js"></script>
+    
     <link rel="stylesheet" href="style.css">
+     <!-- From cdnjs and fontawesome for icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" 
+    integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <title>Today's List</title>
 </head>
 <body>
-    
-    
+    <div class="container">
+        <div class="todays-list">
+            <h1>Today's List</h1>
+            <!-- The Header where user will add tasks -->
+            <form action="" class="input-area">
+                <input type="text" name="" id="task-input" placeholder="Add a new task...">
+                <button type="submit" id="add-task-btn"><i class="fa-solid fa-calendar-plus"></i></button>
+            </form>
+
+            <!-- The list of tasks will be displayed here -->
+             <div class="todays-container">
+                <ul id="task-list"></ul>
+                <img src="./images/empty-list.webp" alt="empty" class="empty-image">
+             </div>
+
+        </div>
+    </div>
+    <!-- Js file link -->
+    <script src="script.js"></script>
 </body>
 </html>
