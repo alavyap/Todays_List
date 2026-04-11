@@ -8,10 +8,10 @@
 }
 
 body{
+    font-family: "Roboto", sans-serif;
     display: flex;
     justify-content: center;
     align-items: center;
-    font-family: "Roboto", sans-serif;
     min-height: 100vh;
     background: url('./images/bg.jpeg') no-repeat center center/cover;
 }
@@ -30,18 +30,20 @@ body{
     max-width: 400px;
     padding: 2rem;
     display: flex;
+    align-items: center;
+    justify-content: center;
     flex-direction: column;
     gap:30px;
     color: #fff;
     border-radius: 20px;
     box-shadow: 0 0 100px rgba(0,0,0,0.5);
     border: 3px solid rgba(255,255,255,0.18);
-    backdrop-filter:  blur(10px);
+    backdrop-filter:  blur(20px);
 }
 
 .todays-list h1{
     font-size: 2rem;
-    text-align: center;
+   
 }
 .input-area{
     display: flex;
@@ -59,4 +61,43 @@ body{
     border-radius: 22px;
     background: rgba(255,194,209,0.3);
     color: #dbdbdb;
+}
+.input-area input::placeholder{
+    color: #bcbdbc;
+}
+
+.input-area button{ 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-left: 10px;
+    padding: 8px;
+    border-radius: 50%;
+    color: #fff;
+    font-size: 1.1rem;
+    background: rgba(255,194,209,0.3);
+    border: 2px solid rgba(255,255,255,0.18);
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.input-area button:hover{
+    transform:  scale(1.1);
+    background: #ff6f91;
+}
+
+.todays-conatiner{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.empty-image{
+    width: 50%;
+    height: auto;
+    display: block;
+    margin: 0 auto;
+}
+
+#task-list{
+    width: 100%;
 }
