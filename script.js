@@ -24,6 +24,10 @@ document.addEventListener("DOMContentLoaded", () => {
         li.innerHTML = `
         <input type="checkbox" class="checkbox">
         <span>${tastkText}</span>
+        <div class="task-buttons">
+            <button class="edit-btn"><i class="fas fa-edit"></i></button>
+            <button class="delete-btn"><i class="fas fa-trash-alt"></i></button>
+        </div>
         `;
 
         taskList.appendChild(li);
