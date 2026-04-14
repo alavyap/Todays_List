@@ -129,7 +129,7 @@ body{
     border-radius: 50%;
     appearance: none;
     cursor: pointer;
-    transition: all;
+    transition: all 0.2s ease;
 }
 
 #task-list li .checkbox:checked{
