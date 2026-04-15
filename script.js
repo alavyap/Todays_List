@@ -19,7 +19,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         const taskText = text || taskInput.value.trim();
         
-        if (!taskText) return; // Prevent adding empty tasks
+        if (!taskText) {return}; // Prevent adding empty tasks
         
         const li = document.createElement("li");
         li.innerHTML = `
@@ -72,10 +72,11 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
     // Event listener for the "Add Task" button
-    addTaskBtn.addEventListener("click", addTask);
+    addTaskBtn.addEventListener("click", () => addTask());
     taskInput.addEventListener("keypress", (e) => {
         if (e.key == "Enter"){
-            addTask(e);
+            e.preventDefault(); // Prevent the default form submission behavior
+            addTask();
         }
     });
 });
