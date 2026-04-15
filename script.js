@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Toggle the visibility of the empty image based on the number of tasks
     const toggleEmptyImage = () => {
         emptyImage.style.display = taskList.children.length === 0 ? "block" : "none";
-        todaysContainer.style.display = taskList.children.length > 0 ? "100%" : "50%";
+        todaysContainer.style.width = taskList.children.length > 0 ? "100%" : "50%";
     }
 
     // Function to add a new task to the list
@@ -37,7 +37,7 @@ document.addEventListener("DOMContentLoaded", () => {
             li.classList.add("completed");
             editBtn.disabled = true; // Disable the edit button for completed tasks
             editBtn.style.opacity = "0.5";
-            editBtn.style.poninterEvents = "none";
+            editBtn.style.pointerEvents = "none";
         }
 
         checkbox.addEventListener("change", () => {
@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // Event listener for the "Add Task" button
     addTaskBtn.addEventListener("click", () => addTask());
-    taskInput.addEventListener("keypress", (e) => {
+    taskInput.addEventListener("keydown", (e) => {
         if (e.key == "Enter"){
             e.preventDefault(); // Prevent the default form submission behavior
             addTask();

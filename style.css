@@ -86,11 +86,12 @@ body{
     background: #ff6f91;
 }
 
-.todays-conatiner{
+.todays-container{
     width: 100%;
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-direction: column; 
 }
 .empty-image{
     width: 50%;
@@ -206,11 +207,11 @@ body{
 
 .details{
     width: 100%;
-};
+}
 
 .details h3 {
     color: #fff;
-};
+}
 
 #progressbar{
     width: 100%;
@@ -219,7 +220,7 @@ body{
     border-radius: 20px;
     position: relative;
     margin-top: 15px;
-};
+}
 
 #progress{
     width: 0%;
