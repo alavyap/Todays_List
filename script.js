@@ -7,18 +7,47 @@ document.addEventListener("DOMContentLoaded", () => {
     const emptyImage = document.querySelector(".empty-image");
     const todaysContainer = document.querySelector(".todays-container");
 
+
+    // Progess Bar Functionality
+    const progressBar = document.getElementById("progress");
+    const progessNumber = document.getElementById("numbers");
+
+
+
+
+
+
     // Toggle the visibility of the empty image based on the number of tasks
     const toggleEmptyImage = () => {
         emptyImage.style.display = taskList.children.length === 0 ? "block" : "none";
         todaysContainer.style.width = taskList.children.length > 0 ? "100%" : "50%";
     }
 
+
+    // Update Progress Bar Functionality
+    const updateProgess = (checkCompletion = true) => {
+        const totalTasks = taskList.children.length;
+        const completedTasks = taskList.querySelectorAll(".checkbox:checked").length;
+        progressBar.style.width = totalTasks > 0 ? `${(completedTasks / totalTasks) * 100}%` : "0%";
+        progessNumber.textContent = `${completedTasks}/${totalTasks}`;
+
+        // confetti animation when all tasks are completed
+        if (checkCompletion && totalTasks > 0 && completedTasks === totalTasks) {
+            Confetti();
+        }
+
+    };
+
+
+    const saveTasksToLocalStorage = () => {
+        
+    };
+
     // Function to add a new task to the list
-    const addTask = (text, completed = false) => {
+    const addTask = (text, completed = false, checkCompletion = true) => {
 
 
         const taskText = text || taskInput.value.trim();
-        
         if (!taskText) {return}; // Prevent adding empty tasks
         
         const li = document.createElement("li");
@@ -46,14 +75,16 @@ document.addEventListener("DOMContentLoaded", () => {
             editBtn.disabled = isChecked; // Disable the edit button when the task is completed
             editBtn.style.opacity = isChecked ? "0.5" : "1";
             editBtn.style.pointerEvents = isChecked ? "none" : "auto";
+            updateProgess();
         });
 
         //Editing a task when the edit button is clicked
-        li.querySelector(".edit-btn").addEventListener("click", () => {
+        editBtn.addEventListener("click", () => {
             if(!checkbox.checked){
                 taskInput.value = li.querySelector("span").textContent; // Set the input field to the current task text
             li.remove(); // Remove the task from the list
             toggleEmptyImage(); // Update the visibility of the empty image
+            updateProgess(false); // Update the progress bar without checking for completion
             }
         });
         // Deleting a task when the delete button is clicked
@@ -64,11 +95,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
         taskList.appendChild(li);
-
         taskInput.value = ""; // Clear the input field after adding a task
-
         toggleEmptyImage(); // Update the visibility of the empty image
-        
+        updateProgess(checkCompletion); // Update the progress bar
+
     };
 
     // Event listener for the "Add Task" button
@@ -80,3 +110,48 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 });
+
+
+
+// Confetti Functionality
+const Confetti = () => {
+    const count = 200,
+  defaults = {
+    origin: { y: 0.7 },
+  };
+
+function fire(particleRatio, opts) {
+  confetti(
+    Object.assign({}, defaults, opts, {
+      particleCount: Math.floor(count * particleRatio),
+    })
+  );
+}
+
+fire(0.25, {
+  spread: 26,
+  startVelocity: 55,
+});
+
+fire(0.2, {
+  spread: 60,
+});
+
+fire(0.35, {
+  spread: 100,
+  decay: 0.91,
+  scalar: 0.8,
+});
+
+fire(0.1, {
+  spread: 120,
+  startVelocity: 25,
+  decay: 0.92,
+  scalar: 1.2,
+});
+
+fire(0.1, {
+  spread: 120,
+  startVelocity: 45,
+});
+}
