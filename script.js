@@ -40,8 +40,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
     const saveTasksToLocalStorage = () => {
-        
+        const tasks = Array.from(taskList.querySelectorAll("li")).map(li => ({
+          text: li.querySelector("span").textContent,
+          completed: li.querySelector(".checkbox").checked
+        }));
+        localStorage.setItem("tasks", JSON.stringify(tasks));
     };
+
+
+    const loadTasksFromLocalStorage = () => {
+      const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+      savedTasks.forEach(({text,completed}) => addTask(text, completed, false));
+      toggleEmptyState();
+      updateProgess();
+    }
+
+
+
 
     // Function to add a new task to the list
     const addTask = (text, completed = false, checkCompletion = true) => {
@@ -76,6 +91,7 @@ document.addEventListener("DOMContentLoaded", () => {
             editBtn.style.opacity = isChecked ? "0.5" : "1";
             editBtn.style.pointerEvents = isChecked ? "none" : "auto";
             updateProgess();
+            saveTasksToLocalStorage(); // Save tasks to local storage whenever a checkbox is toggled
         });
 
         //Editing a task when the edit button is clicked
@@ -98,6 +114,7 @@ document.addEventListener("DOMContentLoaded", () => {
         taskInput.value = ""; // Clear the input field after adding a task
         toggleEmptyImage(); // Update the visibility of the empty image
         updateProgess(checkCompletion); // Update the progress bar
+        saveTasksToLocalStorage(); // Save tasks to local storage whenever a new task is added  
 
     };
 
@@ -109,6 +126,7 @@ document.addEventListener("DOMContentLoaded", () => {
             addTask();
         }
     });
+    loadTasksFromLocalStorage(); // Load tasks from local storage when the page loads
 });
 
 
