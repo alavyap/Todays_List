@@ -103,6 +103,7 @@ body{
 #task-list{
     width: 100%;
 }
+
 #task-list li{
     display: flex;
     justify-content: space-between;
@@ -150,7 +151,20 @@ body{
 #task-list span{
     flex: 1;
     margin-left: 10px;
-    word-wrap: break-word;
+    
+    /* Prevent overflow */
+    word-break: break-word;
+    overflow-wrap: anywhere;
+
+    /* Optional: limit height */
+    max-width: 100%;
+
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    
 }
 
 #task-list li.completed span{
@@ -161,7 +175,8 @@ body{
 .task-buttons{
     display: flex;
     gap: 10px;
-    margin-right: auto;
+    /* margin-right: auto; */
+    flex-shrink: 0;
 }
 
 .task-buttons button{
