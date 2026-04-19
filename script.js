@@ -1,18 +1,111 @@
 document.addEventListener("DOMContentLoaded", () => {
     const taskInput = document.getElementById("task-input");
     const taskList = document.getElementById("task-list");
-
     const emptyImage = document.querySelector(".empty-image");
     const todaysContainer = document.querySelector(".todays-container");
-
     const progressBar = document.getElementById("progress");
     const progressNumber = document.getElementById("numbers");
-
     const form = document.querySelector(".input-area");
+    const settingsBtn = document.getElementById("settings-btn");
+    const settingsModalOverlay = document.getElementById("settings-modal-overlay");
+
+    const DELETE_SETTING_KEY = "deleteCompletedAfterDelay";
+    const DELETE_DELAY_MS = 2 * 60 * 1000;
+    const deleteTimers = new Map();
+    const isMainPage = Boolean(taskInput && taskList && form && settingsBtn && settingsModalOverlay);
+
+    if (!isMainPage) {
+        return;
+    }
+
+    const isAutoDeleteEnabled = () => localStorage.getItem(DELETE_SETTING_KEY) === "yes";
+
+    const openSettingsModal = () => {
+        settingsModalOverlay.classList.remove("hidden");
+    };
+
+    const closeSettingsModal = () => {
+        settingsModalOverlay.classList.add("hidden");
+    };
+
+    const clearDeleteTimer = (taskId) => {
+        const timerId = deleteTimers.get(taskId);
+        if (timerId) {
+            clearTimeout(timerId);
+            deleteTimers.delete(taskId);
+        }
+    };
+
+    const removeTask = (li, checkCompletion = true) => {
+        clearDeleteTimer(li.dataset.taskId);
+        li.remove();
+        toggleEmptyState();
+        updateProgress(checkCompletion);
+        saveTasksToLocalStorage();
+    };
+
+    const scheduleTaskDeletion = (li) => {
+        const taskId = li.dataset.taskId;
+
+        clearDeleteTimer(taskId);
+
+        if (!isAutoDeleteEnabled()) {
+            return;
+        }
+
+        deleteTimers.set(taskId, window.setTimeout(() => {
+            if (li.isConnected) {
+                removeTask(li);
+            } else {
+                clearDeleteTimer(taskId);
+            }
+        }, DELETE_DELAY_MS));
+    };
+
+    const refreshDeletionSchedules = () => {
+        const tasks = taskList.querySelectorAll("li");
+
+        tasks.forEach((li) => {
+            const checkbox = li.querySelector(".checkbox");
+
+            if (checkbox.checked && isAutoDeleteEnabled()) {
+                scheduleTaskDeletion(li);
+            } else {
+                clearDeleteTimer(li.dataset.taskId);
+            }
+        });
+    };
 
     form.addEventListener("submit", (e) => {
         e.preventDefault();
         addTask();
+    });
+
+    settingsBtn.addEventListener("click", openSettingsModal);
+    settingsModalOverlay.addEventListener("click", (e) => {
+        if (e.target === settingsModalOverlay) {
+            closeSettingsModal();
+        }
+    });
+
+    document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && !settingsModalOverlay.classList.contains("hidden")) {
+            closeSettingsModal();
+        }
+    });
+
+    window.addEventListener("message", (event) => {
+        if (!event.data || typeof event.data.type !== "string") {
+            return;
+        }
+
+        if (event.data.type === "close-settings-modal") {
+            closeSettingsModal();
+        }
+
+        if (event.data.type === "settings-updated") {
+            refreshDeletionSchedules();
+        }
     });
 
     const toggleEmptyState = () => {
@@ -37,6 +130,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const saveTasksToLocalStorage = () => {
         const tasks = Array.from(taskList.querySelectorAll("li")).map(li => ({
+            id: li.dataset.taskId,
             text: li.querySelector("span").textContent,
             completed: li.querySelector(".checkbox").checked
         }));
@@ -45,15 +139,16 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const loadTasksFromLocalStorage = () => {
         const savedTasks = JSON.parse(localStorage.getItem("tasks")) || [];
-        savedTasks.forEach(({ text, completed }) =>
-            addTask(text, completed, false)
+        savedTasks.forEach(({ id, text, completed }) =>
+            addTask(text, completed, false, id)
         );
         toggleEmptyState();
         updateProgress();
+        refreshDeletionSchedules();
     };
 
-    const addTask = (text, completed = false, checkCompletion = true) => {
-        const taskText = text || taskInput.value.trim();
+    const addTask = (text, completed = false, checkCompletion = true, taskId = crypto.randomUUID()) => {
+        let taskText = text || taskInput.value.trim();
         if (!taskText) return;
         const MAX_LENGTH = 100;
 
@@ -62,8 +157,8 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         const li = document.createElement("li");
+        li.dataset.taskId = taskId;
 
-        // ✅ SAFE ELEMENT CREATION
         const checkbox = document.createElement("input");
         checkbox.type = "checkbox";
         checkbox.classList.add("checkbox");
@@ -98,6 +193,12 @@ document.addEventListener("DOMContentLoaded", () => {
             editBtn.style.opacity = isChecked ? "0.5" : "1";
             editBtn.style.pointerEvents = isChecked ? "none" : "auto";
 
+            if (isChecked) {
+                scheduleTaskDeletion(li);
+            } else {
+                clearDeleteTimer(taskId);
+            }
+
             updateProgress();
             saveTasksToLocalStorage();
         });
@@ -105,27 +206,29 @@ document.addEventListener("DOMContentLoaded", () => {
         editBtn.addEventListener("click", () => {
             if (!checkbox.checked) {
                 taskInput.value = span.textContent;
-                li.remove();
-                toggleEmptyState();
-                updateProgress(false);
-                saveTasksToLocalStorage(); // ✅ FIXED
+                removeTask(li, false);
             }
         });
 
         buttonContainer.querySelector(".delete-btn").addEventListener("click", () => {
-            li.remove();
-            toggleEmptyState();
-            updateProgress();
-            saveTasksToLocalStorage();
+            removeTask(li);
         });
 
         taskList.appendChild(li);
+
+        if (completed) {
+            scheduleTaskDeletion(li);
+        }
 
         taskInput.value = "";
         toggleEmptyState();
         updateProgress(checkCompletion);
         saveTasksToLocalStorage();
     };
+
+    if (!localStorage.getItem(DELETE_SETTING_KEY)) {
+        localStorage.setItem(DELETE_SETTING_KEY, "no");
+    }
 
     loadTasksFromLocalStorage();
 });

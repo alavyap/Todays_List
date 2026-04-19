@@ -15,6 +15,7 @@
     <div class="container">
         <div class="todays-list">
             <h1>Today's List</h1>
+            <button id="settings-btn"><i class="fa-solid fa-gear"></i></button>
             <div class="stat-container">
                 <div class="details">
                     <h3>Keep it Up!</h3>
@@ -41,6 +42,14 @@
              </div>
 
         </div>
+    </div>
+    <div class="modal-overlay hidden" id="settings-modal-overlay">
+        <iframe
+            src="modal.html"
+            title="Settings"
+            class="settings-modal-frame"
+            id="settings-modal-frame"
+        ></iframe>
     </div>
     <!-- Js file link -->
     <script src="script.js"></script>
